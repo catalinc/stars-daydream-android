@@ -31,8 +31,8 @@ class Universe {
         updateStars();
         if (now - lastSpawn > spawnInterval) {
             fillWithStars();
+            lastSpawn = now;
         }
-        lastSpawn = now;
     }
 
     Set<Star> getStars() {

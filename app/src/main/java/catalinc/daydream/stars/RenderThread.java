@@ -4,12 +4,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.view.SurfaceHolder;
 
 class RenderThread extends Thread {
     private static final int FPS = 1;
+    private static final double DEGREES_144 = Math.toRadians(144);
+
     private SurfaceHolder mSurfaceHolder;
     private Universe mUniverse;
     private Paint mPaint;
@@ -29,6 +32,7 @@ class RenderThread extends Thread {
                 .setWidth(displayMetrics.widthPixels)
                 .create();
         mPaint = new Paint();
+        mPaint.setAntiAlias(true);
     }
 
     void go() {
@@ -75,8 +79,26 @@ class RenderThread extends Thread {
 
         // draw stars
         for (Star star : mUniverse.getStars()) {
-            mPaint.setColor(star.getColor());
-            canvas.drawCircle(star.getX(), star.getY(), 2, mPaint);
+            drawStar(canvas, star);
         }
+    }
+
+    private void drawStar(Canvas canvas, Star star) {
+        mPaint.setColor(star.getColor());
+        Path path = new Path();
+        int x = star.getX();
+        int y = star.getY();
+        path.moveTo(x, y);
+        double angle = 0;
+        for (int i = 0; i < 5; i++) {
+            int x2 = x + (int) (Math.cos(angle) * 40);
+            int y2 = y + (int) (Math.sin(-angle) * 40);
+            path.lineTo(x2, y2);
+            x = x2;
+            y = y2;
+            angle -= DEGREES_144;
+        }
+        path.close();
+        canvas.drawPath(path, mPaint);
     }
 }
