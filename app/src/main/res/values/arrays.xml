@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="colorPaletteEntries">
+        <item>Default</item>
+    </string-array>
+    <string-array name="colorPaletteValues">
+        <item>#000000,#4286f4,#f4428f,#f4d942,#42f4dc,#f44242,#f44242,#f4a442</item>
+    </string-array>
+</resources>
