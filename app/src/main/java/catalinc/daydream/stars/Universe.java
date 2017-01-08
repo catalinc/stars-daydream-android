@@ -12,6 +12,7 @@ class Universe {
     private Set<Star> stars;
     private long lastSpawn;
     private Random random;
+    private int maxStarSize;
 
     Universe(int width, int height,
              int maxStars, int maxStarLifespan,
@@ -25,22 +26,36 @@ class Universe {
         this.stars = new HashSet<>(maxStars);
         this.lastSpawn = -1L;
         this.random = new Random();
+        this.maxStarSize = Math.min(width, height) / 10;
     }
 
     void update(long now) {
-        updateStars();
         if (now - lastSpawn > spawnInterval) {
             fillWithStars();
             lastSpawn = now;
         }
+        updateStars();
     }
 
     Set<Star> getStars() {
         return stars;
     }
 
-    int getBackgroundColor() {
+    int getColor() {
         return colorPalette[0];
+    }
+
+    int getStarSize(Star star) {
+        double p = Math.min(1.0, (double) (maxStarLifespan - star.getLifespan()) / maxStarLifespan);
+        return (int) (p * maxStarSize);
+    }
+
+    float getStarGlowSize() {
+        return maxStarSize / 3.0f;
+    }
+
+    boolean shouldGlow(Star star) {
+        return star.getLifespan() < maxStarLifespan / 3;
     }
 
     private void updateStars() {

@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("catalinc.daydream.starry_night", appContext.getPackageName());
+        assertEquals("catalinc.daydream.stars", appContext.getPackageName());
     }
 }

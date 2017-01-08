@@ -2,6 +2,7 @@ package catalinc.daydream.stars;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -16,6 +17,8 @@ class RenderThread extends Thread {
     private SurfaceHolder mSurfaceHolder;
     private Universe mUniverse;
     private Paint mPaint;
+    private Path mPath;
+    private BlurMaskFilter mBlurFilter;
     private volatile boolean mRunning;
 
     RenderThread(Context context, SurfaceHolder mSurfaceHolder) {
@@ -33,6 +36,8 @@ class RenderThread extends Thread {
                 .create();
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
+        mPath = new Path();
+        mBlurFilter = new BlurMaskFilter(mUniverse.getStarGlowSize(), BlurMaskFilter.Blur.SOLID);
     }
 
     void go() {
@@ -42,7 +47,7 @@ class RenderThread extends Thread {
 
     @Override
     public void run() {
-        long msPerFrame = 1000 / FPS;
+        long msPerFrame = 1000L / FPS;
         while (mRunning) {
             long startTime = System.currentTimeMillis();
             mUniverse.update(startTime);
@@ -74,7 +79,7 @@ class RenderThread extends Thread {
 
     private void drawUniverse(Canvas canvas) {
         // draw background
-        mPaint.setColor(mUniverse.getBackgroundColor());
+        mPaint.setColor(mUniverse.getColor());
         canvas.drawPaint(mPaint);
 
         // draw stars
@@ -84,21 +89,27 @@ class RenderThread extends Thread {
     }
 
     private void drawStar(Canvas canvas, Star star) {
+        mPath.reset();
+        mPaint.setMaskFilter(null);
         mPaint.setColor(star.getColor());
-        Path path = new Path();
+        int size = mUniverse.getStarSize(star);
         int x = star.getX();
         int y = star.getY();
-        path.moveTo(x, y);
+        mPath.moveTo(x, y);
         double angle = 0;
         for (int i = 0; i < 5; i++) {
-            int x2 = x + (int) (Math.cos(angle) * 40);
-            int y2 = y + (int) (Math.sin(-angle) * 40);
-            path.lineTo(x2, y2);
+            int x2 = x + (int) (Math.cos(angle) * size);
+            int y2 = y + (int) (Math.sin(-angle) * size);
+            mPath.lineTo(x2, y2);
             x = x2;
             y = y2;
             angle -= DEGREES_144;
         }
-        path.close();
-        canvas.drawPath(path, mPaint);
+        mPath.close();
+        if (mUniverse.shouldGlow(star)) {
+            mPaint.setMaskFilter(mBlurFilter);
+        }
+        canvas.drawPath(mPath, mPaint);
     }
+
 }

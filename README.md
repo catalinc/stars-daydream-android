@@ -1,4 +1,6 @@
 # stars-daydream-android
-Android screensaver
+Android screensaver. 
 
-_WIP_
+Screenshot:
+
+![stars](https://github.com/catalinc/stars-daydream-android/raw/master/dream.gif)

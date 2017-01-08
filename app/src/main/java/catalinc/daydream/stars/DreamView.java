@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 
 public class DreamView extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -11,6 +12,9 @@ public class DreamView extends SurfaceView implements SurfaceHolder.Callback {
 
     public DreamView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+        // Disable hardware acceleration so we can use BlurMaskFilter
+        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         SurfaceHolder holder = getHolder();
         holder.addCallback(this);
